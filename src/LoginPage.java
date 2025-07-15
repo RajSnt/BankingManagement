@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.ResultSet;
 
 public class LoginPage extends JFrame implements ActionListener {
     //Declaring buttons globally so that they can be used in all classes and methods
@@ -92,14 +93,30 @@ public class LoginPage extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e){
         //the getSource() checks whether the button was clicked or not
         if (e.getSource()==Sign){
-
+            String card = CardInfo.getText();
+            String pin = PinInfo.getText();
+            Conn c = new Conn();
+            String query = "Select * from login where cardnumber = '"+card+"' and pinnumber = '"+pin+"';";
+            try{
+                ResultSet rs = c.s.executeQuery(query);
+                if(rs.next()){
+                    setVisible(false);
+                    new Transaction(pin).setVisible(true);
+                } else{
+                    JOptionPane.showMessageDialog(null, "Incorrect Card Number or PIN");
+                }
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
         }
         else if (e.getSource()==Clear) {
             CardInfo.setText("");
             PinInfo.setText("");
         }
         else if (e.getSource()==SignUp) {
-
+            //The initial login page will close and the signupone class object will come to work and its window will open as set visible of it is set to true
+            setVisible(false);
+            new SignUpOne().setVisible(true);
         }
     }
 
